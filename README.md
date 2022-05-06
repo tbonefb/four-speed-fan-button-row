@@ -1,7 +1,10 @@
-# Fan Percent Button Row
-Provides a means to program 2 or 3 preset speed percentage settings for fans selectable from a Lovelace button row.
+# Four Speed Fan Button Row
 
-## NOTE: You must be on Home Assistant V2021.3.X or higher to use this plug-in. However, if your fan integration hasn't been updated to the new control method (if it doesn't actually use percentages for speeds but still uses a speed list) then you need to use the fan-control-entity-row.
+Provides a means to program 4 ( or 2 or 3 ) preset speed percentage settings for fans selectable from a Lovelace button row.
+
+## NOTE: Forked and modified from [Fan Button Percent Row](https://github.com/finity69x2/fan-percent-button-row)
+
+## NOTE: You must be on Home Assistant V2021.3.X or higher to use this plug-in. However, if your fan integration hasn't been updated to the new control method (if it doesn't actually use percentages for speeds but still uses a speed list) then you need to use the fan-control-entity-row
 
 Installation:
 
@@ -9,7 +12,7 @@ Installation:
 
 **NOTE:**
 
-For some reason there is a big backlog of requests to add repositories as defaulkt in HACS. Hopefully it gets resolved soon.
+For some reason there is a big backlog of requests to add repositories as default in HACS. Hopefully it gets resolved soon.
 
 In the meantime, you can still add this as a custom repository in HACS.
 
@@ -21,27 +24,25 @@ The easiest way to install this is to use the Home Assistant Community Store (HA
 
 Follow the instructions there for installation making sure you note the "url:" section for the resources addition.
 
-
 Conversely, if you don't use HACS you can install it manually by performing the following:
 
-Copy the fan-percent-button-row.js file to the appropriate folder in your Home Assistant Configuration directory (/config/www/).
+Copy the four-speed-fan-button-row.js file to the appropriate folder in your Home Assistant Configuration directory (/config/www/).
 
 Place the following in your "resources" section in your lovelace configuration (updating the location to where you placed the above file):
 
   ```
-    - url: /local/fan-percent-button-row.js
+    - url: /local/four-speed-fan-button-row.js
       type: module
   ```
-    
-Then to use this in a card place the following in your entity card:
 
+Then to use this in a card place the following in your entity card:
 
 <b>Options:</b>
 
 | Name | Type | Required | Default | Description |
 | --- | --- | --- | --- | --- |
 | entity | String | Yes | none | any fan entity_id |
-| type | String | Yes | none | custom:fan-percent-button-row |
+| type | String | Yes | none | custom:four-speed-fan-button-row |
 | name | String | No | none | A custom name for the entity in the row |
 | customTheme | Boolean | No | false | set to true to use a custom theme |
 | customSetpoints | Boolean | No | false | set to true to use custom speed percent setpoints |
@@ -65,13 +66,12 @@ Then to use this in a card place the following in your entity card:
 | customMedText | String | No | 'MED' | Sets the text of the "medium" speed button |
 | customHiText | String | No | 'HIGH' | Sets the text of the "High" speed button |
 
-
 The values for the colors can be any valid color string in "HEX", "RGB" or by color name.
 
 If the speed percantage is changed via any other means (slider, service call, etc) the buttons will indicate which range the speed percentage is in based on the setpoint settings in the config.
 
 <b>Configuration Examples:</b>
-    
+
   ```
     cards:
       - type: entities
@@ -80,12 +80,12 @@ If the speed percantage is changed via any other means (slider, service call, et
         entities:
         ## USE THIS CONFIG TO HAVE IT MATCH YOUR THEME ##
           - entity: fan.hall_fan
-            type: custom:fan-percent-button-row
+            type: custom:four-speed-fan-button-row
             name: Fan Not Custom Theme
             customTheme: false
         ## USE THIS CONFIG TO USE A DEFAULT CUSTOM THEME
           - entity: fan.hall_fan
-            type: custom:fan-percent-button-row
+            type: custom:four-speed-fan-button-row
             name: Fan Default Custom Theme
             customTheme: true
             customSetpoints: true
@@ -94,7 +94,7 @@ If the speed percantage is changed via any other means (slider, service call, et
             hiPercentage: 90
         ## USE THIS CONFIG TO USE A 'CUSTOMZED' CUSTOM THEME
           - entity: fan.hall_fan
-            type: custom:fan-percent-button-row
+            type: custom:four-speed-fan-button-row
             name: Fan Custom Custom Theme
             reverseButtons: true
             customTheme: true
@@ -105,7 +105,7 @@ If the speed percantage is changed via any other means (slider, service call, et
             isOffColor: 'purple'
         ## USE THIS CONFIG TO SET CUSTOM BUTTON TEXT (NOT REQUIRED TO SET "customTheme: true" TO USE THESE )
           - entity: fan.hall_fan
-            type: custom:fan-percent-button-row
+            type: custom:four-speed-fan-button-row
             name: Fan Custom Button Text
             customHiText: me
             customLowText: do
@@ -127,4 +127,3 @@ This is with the "Slate" frontend theme set:
 This is how this plugin looks with the plugin fully themed:
 
 ![Slate-Themed](images/fan_percent_themed.jpg)
-
