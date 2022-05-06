@@ -46,6 +46,12 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 								disabled='[[_midLeftState]]'>[[_midLeftText]]</button>
 							<button
 								class='percentage'
+								style='[[_midColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideMid]]'
+								toggles name="[[_midName]]"
+								on-click='setPercentage'
+								disabled='[[_midState]]'>[[_midText]]</button>
+							<button
+								class='percentage'
 								style='[[_midRightColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideMidRight]]'
 								toggles name="[[_midRightName]]"
 								on-click='setPercentage'
