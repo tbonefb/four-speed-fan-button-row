@@ -6,108 +6,14 @@ window.customCards.push({
 	preview: false,
 });
 
-class CustomFourSpeedFanRow extends Polymer.Element {
+const LitElement = customElements.get("ha-panel-lovelace") ? Object.getPrototypeOf(customElements.get("ha-panel-lovelace")) : Object.getPrototypeOf(customElements.get("hc-lovelace"));
+const html = LitElement.prototype.html;
+const css = LitElement.prototype.css;
 
-	static get template() {
-		return Polymer.html`
-			<style is="custom-style" include="iron-flex iron-flex-alignment"></style>
-			<style>
-				:host {
-					line-height: inherit;
-				}
-				.percentage {
-					margin-left: 2px;
-					margin-right: 2px;
-					background-color: #759aaa;
-					border: 1px solid lightgrey; 
-					border-radius: 4px;
-					font-size: 10px !important;
-					color: inherit;
-					text-align: center;
-					float: right !important;
-					padding: 1px;
-					cursor: pointer;
-				}
-				
-				</style>
-					<hui-generic-entity-row hass="[[hass]]" config="[[_config]]">
-						<div class='horizontal justified layout' on-click="stopPropagation">
-							<button
-								class='percentage'
-								style='[[_leftColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideLeft]]'
-								toggles name="[[_leftName]]"
-								on-click='setPercentage'
-								disabled='[[_leftState]]'>[[_leftText]]</button>
-							<button
-								class='percentage'
-								style='[[_midLeftColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideMidLeft]]'
-								toggles name="[[_midLeftName]]"
-								on-click='setPercentage'
-								disabled='[[_midLeftState]]'>[[_midLeftText]]</button>
-							<button
-								class='percentage'
-								style='[[_midColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideMid]]'
-								toggles name="[[_midName]]"
-								on-click='setPercentage'
-								disabled='[[_midState]]'>[[_midText]]</button>
-							<button
-								class='percentage'
-								style='[[_midRightColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideMidRight]]'
-								toggles name="[[_midRightName]]"
-								on-click='setPercentage'
-								disabled='[[_midRightState]]'>[[_midRightText]]</button>
-							<button
-								class='percentage'
-								style='[[_rightColor]];min-width:[[_width]];max-width:[[_width]];height:[[_height]];[[_hideRight]]'
-								toggles name="[[_rightName]]"
-								on-click='setPercentage'
-								disabled='[[_rightState]]'>[[_rightText]]</button>
-						</div>
-					</hui-generic-entity-row>
-		`;
-	}
+class CustomFourSpeedFanRow extends LitElement {
 
-	static get properties() {
-		return {
-			hass: {
-				type: Object,
-				observer: 'hassChanged'
-			},
-			_config: Object,
-			_stateObj: Object,
-			_offSP: Number,
-			_lowSP: Number,
-			_medSP: Number,
-			_highSP: Number,
-			_width: String,
-			_height: String,
-			_leftColor: String,
-			_midLeftColor: String,
-			_midRightColor: String,
-			_rightColor: String,
-			_leftText: String,
-			_midLeftText: String,
-			_midRightText: String,
-			_rightText: String,
-			_leftName: String,
-			_midLeftName: String,
-			_midRightName: String,
-			_rightName: String,
-			_hideLeft: String,
-			_hideMidLeft: String,
-			_hideMidRight: String,
-			_hideRight: String,
-			_leftState: Boolean,
-			_midLeftState: Boolean,
-			_midRightState: Boolean,
-			_rightState: Boolean,
-
-		}
-	}
-
-	setConfig(config) {
-		this._config = config;
-
+	constructor() {
+		super();
 		this._config = {
 			customTheme: false,
 			customSetpoints: false,
@@ -119,31 +25,145 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 			allowDisablingButtons: true,
 			offPercentage: 0,
 			lowPercentage: 25,
-			medLowPercentage: 50,
-			medPercentage: 75,
+			medPercentage: 50,
+			medHighPercentage: 75,
 			hiPercentage: 100,
 			width: '30px',
 			height: '30px',
 			isOffColor: '#f44c09',
 			isOnLowColor: '#43A047',
-			isOnMedLowColor: '#43A047',
 			isOnMedColor: '#43A047',
+			isOnMedHighColor: '#43A047',
 			isOnHiColor: '#43A047',
 			buttonInactiveColor: '#759aaa',
 			customOffText: 'OFF',
 			customLowText: 'LOW',
-			customMedLowText: 'MED LOW',
 			customMedText: 'MED',
+			customMedHiText: 'MED HIGH',
 			customHiText: 'HIGH',
-			...config
 		};
 	}
 
-	hassChanged(hass) {
+	static get properties() {
+		return {
+			hass: Object,
+			_config: Object,
+			_stateObj: Object,
+			_offSP: Number,
+			_lowSP: Number,
+			_medSP: Number,
+			_medhiSP: Number,
+			_highSP: Number,
+			_width: String,
+			_height: String,
+			_leftColor: String,
+			_midLeftColor: String,
+			_midColor: String,
+			_midRightColor: String,
+			_rightColor: String,
+			_leftText: String,
+			_midLeftText: String,
+			_midText: String,
+			_midRightText: String,
+			_rightText: String,
+			_leftName: String,
+			_midLeftName: String,
+			_midName: String,
+			_midRightName: String,
+			_rightName: String,
+			_hideLeft: String,
+			_hideMidLeft: String,
+			_hideMid: String,
+			_hideMidRight: String,
+			_hideRight: String,
+			_leftState: Boolean,
+			_midLeftState: Boolean,
+			_midState: Boolean,
+			_midRightState: Boolean,
+			_rightState: Boolean,
+		};
+	}
 
+	static get styles() {
+		return css`
+			:host {
+				line-height: inherit;
+			}
+			.percentage {
+				margin-left: 2px;
+				margin-right: 2px;
+				background-color: #759aaa;
+				border: 1px solid lightgrey; 
+				border-radius: 4px;
+				font-size: 10px !important;
+				color: inherit;
+				text-align: center;
+				float: left !important;
+				padding: 1px;
+				cursor: pointer;
+			}
+		`;
+	}
+
+	render() {
+		return html`
+			<hui-generic-entity-row .hass="${this.hass}" .config="${this._config}">
+				<div id='button-container' class='horizontal justified layout'>
+					<button
+						class='percentage'
+						style='${this._leftColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideLeft}'
+						toggles name="${this._leftName}"
+						@click=${this.setPercentage}
+						.disabled=${this._leftState}>${this._leftText}</button>
+					<button
+						class='percentage'
+						style='${this._midLeftColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideMidLeft}'
+						toggles name="${this._midLeftName}"
+						@click=${this.setPercentage}
+						.disabled=${this._midLeftState}>${this._midLeftText}</button>
+					<button
+						class='percentage'
+						style='${this._midColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideMid}'
+						toggles name="${this._midName}"
+						@click=${this.setPercentage}
+						.disabled=${this._midState}>${this._midText}</button>
+					<button
+						class='percentage'
+						style='${this._midRightColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideMidRight}'
+						toggles name="${this._midRightName}"
+						@click=${this.setPercentage}
+						.disabled=${this._midRightState}>${this._midRightText}</button>
+					<button
+						class='percentage'
+						style='${this._rightColor};min-width:${this._width};max-width:${this._width};height:${this._height};${this._hideRight}'
+						toggles name="${this._rightName}"
+						@click=${this.setPercentage}
+						.disabled=${this._rightState}>${this._rightText}</button>
+				</div>
+			</hui-generic-entity-row>
+		`;
+	}
+
+	firstUpdated() {
+		super.firstUpdated();
+		this.shadowRoot.getElementById('button-container').addEventListener('click', (ev) => ev.stopPropagation());
+	}
+
+	setConfig(config) {
+		this._config = { ...this._config, ...config };
+	}
+
+	updated(changedProperties) {
+		if (changedProperties.has("hass")) {
+			this.hassChanged();
+		}
+	}
+
+	hassChanged() {
 		const config = this._config;
-		const stateObj = hass.states[config.entity];
+		const stateObj = this.hass.states[config.entity];
 		const custTheme = config.customTheme;
+		const custSetpoint = config.customSetpoints;
 		const revButtons = config.reverseButtons;
 		const twoSpdFan = config.isTwoSpeedFan;
 		const threeSpdFan = config.isThreeSpeedFan;
@@ -153,36 +173,36 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 		const buttonWidth = config.width;
 		const buttonHeight = config.height;
 		const OnLowClr = config.isOnLowColor;
-		const OnMedLowClr = config.isOnMedLowColor;
 		const OnMedClr = config.isOnMedColor;
+		const OnMedHighClr = config.isOnMedHighColor;
 		const OnHiClr = config.isOnHiColor;
 		const OffClr = config.isOffColor;
 		const buttonOffClr = config.buttonInactiveColor;
 		const OffSetpoint = config.offPercentage;
 		const LowSetpoint = config.lowPercentage;
-		const MedLowSetpoint = config.medLowPercentage;
 		const MedSetpoint = config.medPercentage;
+		const MedHiSetpoint = config.medHighPercentage;
 		const HiSetpoint = config.hiPercentage;
 		const custOffTxt = config.customOffText;
 		const custLowTxt = config.customLowText;
-		const custMedLowTxt = config.customMedLowText;
 		const custMedTxt = config.customMedText;
+		const custMedHiTxt = config.customMedHiText;
 		const custHiTxt = config.customHiText;
 
 		let offSetpoint;
 		let lowSetpoint;
-		let medLowSetpoint;
 		let medSetpoint;
+		let medhiSetpoint;
 		let hiSetpoint;
 		let low;
-		let medlow;
 		let med;
+		let medhigh;
 		let high;
 		let offstate;
 
 		offSetpoint = parseInt(OffSetpoint);
 		medSetpoint = parseInt(MedSetpoint);
-		medLowSetpoint = parseInt(MedLowSetpoint);
+		medhiSetpoint = parseInt(MedHiSetpoint);
 		if (parseInt(LowSetpoint) < 1) {
 			lowSetpoint = 1;
 		} else {
@@ -196,11 +216,11 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 		if (stateObj && stateObj.attributes) {
 			if (stateObj.state == 'on' && stateObj.attributes.percentage > offSetpoint && stateObj.attributes.percentage <= lowSetpoint) {
 				low = 'on';
-			} else if (stateObj.state == 'on' && stateObj.attributes.percentage > lowSetpoint && stateObj.attributes.percentage <= medLowSetpoint) {
-				medlow = 'on';
-			} else if (stateObj.state == 'on' && stateObj.attributes.percentage > medLowSetpoint && stateObj.attributes.percentage <= medSetpoint) {
+			} else if (stateObj.state == 'on' && (stateObj.attributes.percentage > lowSetpoint) && (stateObj.attributes.percentage <= medSetpoint)) {
 				med = 'on';
-			} else if (stateObj.state == 'on' && stateObj.attributes.percentage > medSetpoint && stateObj.attributes.percentage <= hiSetpoint) {
+			} else if (stateObj.state == 'on' && (stateObj.attributes.percentage > medSetpoint) && (stateObj.attributes.percentage <= medhiSetpoint)) {
+				medhigh = 'on';
+			} else if (stateObj.state == 'on' && (stateObj.attributes.percentage > medhiSetpoint) && (stateObj.attributes.percentage <= hiSetpoint)) {
 				high = 'on';
 			} else {
 				offstate = 'on';
@@ -208,11 +228,10 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 		}
 
 		let lowcolor;
-		let medlowcolor;
 		let medcolor;
+		let medhighcolor;
 		let hicolor;
 		let offcolor;
-
 
 		if (custTheme) {
 			if (low == 'on') {
@@ -220,15 +239,15 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 			} else {
 				lowcolor = 'background-color:' + buttonOffClr;
 			}
-			if (medlow == 'on') {
-				medlowcolor = 'background-color:' + OnMedLowClr;
-			} else {
-				medlowcolor = 'background-color:' + buttonOffClr;
-			}
 			if (med == 'on') {
 				medcolor = 'background-color:' + OnMedClr;
 			} else {
 				medcolor = 'background-color:' + buttonOffClr;
+			}
+			if (medhigh == 'on') {
+				medhighcolor = 'background-color:' + OnMedHighClr;
+			} else {
+				medhighcolor = 'background-color:' + buttonOffClr;
 			}
 			if (high == 'on') {
 				hicolor = 'background-color:' + OnHiClr;
@@ -246,15 +265,15 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 			} else {
 				lowcolor = 'background-color: var(--switch-unchecked-color)';
 			}
-			if (medlow == 'on') {
-				medlowcolor = 'background-color: var(--switch-checked-color)';
-			} else {
-				medlowcolor = 'background-color: var(--switch-unchecked-color)';
-			}
 			if (med == 'on') {
 				medcolor = 'background-color: var(--switch-checked-color)';
 			} else {
 				medcolor = 'background-color: var(--switch-unchecked-color)';
+			}
+			if (medhigh == 'on') {
+				medhighcolor = 'background-color: var(--switch-checked-color)';
+			} else {
+				medhighcolor = 'background-color: var(--switch-unchecked-color)';
 			}
 			if (high == 'on') {
 				hicolor = 'background-color: var(--switch-checked-color)';
@@ -270,8 +289,8 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 
 		let offtext = custOffTxt;
 		let lowtext = custLowTxt;
-		let medlowtext = custMedLowTxt;
 		let medtext = custMedTxt;
+		let medhitext = custMedHiTxt;
 		let hitext = custHiTxt;
 
 		let buttonwidth = buttonWidth;
@@ -279,22 +298,22 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 
 		let offname = 'off'
 		let lowname = 'low'
-		let medlowname = 'medium-low'
 		let medname = 'medium'
+		let medhiname = 'medium-high'
 		let hiname = 'high'
 
 		let hideoff = 'display:block';
-		let hidemedlow = 'display:block';
 		let hidemedium = 'display:block';
+		let hidemediumhigh = 'display:block';
 		let nohide = 'display:block';
 
 		if (twoSpdFan) {
 			hidemedium = 'display:none';
-			hidemedlow = 'display:none';
+			hidemediumhigh = 'display:none';
 		}
 
 		if (threeSpdFan) {
-			hidemedlow = 'display:none';
+			hidemediumhigh = 'display:none';
 		}
 
 		if (hide_Off) {
@@ -303,92 +322,76 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 			hideoff = 'display:block';
 		}
 
-		if (revButtons) {
-			this.setProperties({
-				_stateObj: stateObj,
-				_leftState: (offstate == 'on' && allowDisable),
-				_midLeftState: (low === 'on' && allowDisable),
-				_midState: (medlow === 'on' && allowDisable),
-				_midRightState: (med === 'on' && allowDisable),
-				_rightState: (high === 'on' && allowDisable),
-				_width: buttonwidth,
-				_height: buttonheight,
-				_leftColor: offcolor,
-				_midLeftColor: lowcolor,
-				_midColor: medlowcolor,
-				_midRightColor: medcolor,
-				_rightColor: hicolor,
-				_offSP: offSetpoint,
-				_lowSP: lowSetpoint,
-				_medSP: medSetpoint,
-				_medLowSP: medLowSetpoint,
-				_highSP: hiSetpoint,
-				_leftText: offtext,
-				_midLeftText: lowtext,
-				_midText: medlowtext,
-				_midRightText: medtext,
-				_rightText: hitext,
-				_leftName: offname,
-				_midLeftName: lowname,
-				_midName: medlowname,
-				_midRightName: medname,
-				_rightName: hiname,
-				_hideLeft: hideoff,
-				_hideMidLeft: nohide,
-				_hideMid: hidemedlow,
-				_hideMidRight: hidemedium,
-				_hideRight: nohide,
-			});
-		} else {
-			this.setProperties({
-				_stateObj: stateObj,
-				_leftState: (high == 'on' && allowDisable),
-				_midLeftState: (med === 'on' && allowDisable),
-				_midState: (medlow === 'on' && allowDisable),
-				_midRightState: (low === 'on' && allowDisable),
-				_rightState: (offstate === 'on' && allowDisable),
-				_width: buttonwidth,
-				_height: buttonheight,
-				_leftColor: hicolor,
-				_midLeftColor: medcolor,
-				_midColor: medlowcolor,
-				_midRightColor: lowcolor,
-				_rightColor: offcolor,
-				_offSP: offSetpoint,
-				_lowSP: lowSetpoint,
-				_medSP: medSetpoint,
-				_medLowSP: medLowSetpoint,
-				_highSP: hiSetpoint,
-				_leftText: hitext,
-				_midLeftText: medtext,
-				_midText: medlowtext,
-				_midRightText: lowtext,
-				_rightText: offtext,
-				_leftName: hiname,
-				_midLeftName: medname,
-				_midName: medlowname,
-				_midRightName: lowname,
-				_rightName: offname,
-				_hideRight: hideoff,
-				_hideMidRight: nohide,
-				_hideMid: hidemedlow,
-				_hideMidLeft: hidemedium,
-				_hideLeft: nohide
-			});
-		}
-	}
+		this._stateObj = stateObj;
+		this._width = buttonwidth;
+		this._height = buttonheight;
+		this._offSP = offSetpoint;
+		this._lowSP = lowSetpoint;
+		this._medSP = medSetpoint;
+		this._medhiSP = medhiSetpoint;
+		this._highSP = hiSetpoint;
 
-	stopPropagation(e) {
-		e.stopPropagation();
+		if (revButtons) {
+			this._leftState = (offstate == 'on' && allowDisable);
+			this._midLeftState = (low === 'on' && allowDisable);
+			this._midState = (med === 'on' && allowDisable);
+			this._midRightState = (medhigh === 'on' && allowDisable);
+			this._rightState = (high === 'on' && allowDisable);
+			this._leftColor = offcolor;
+			this._midLeftColor = lowcolor;
+			this._midColor = medcolor;
+			this._midRightColor = medhighcolor;
+			this._rightColor = hicolor;
+			this._leftText = offtext;
+			this._midLeftText = lowtext;
+			this._midText = medtext;
+			this._midRightText = medhitext;
+			this._rightText = hitext;
+			this._leftName = offname;
+			this._midLeftName = lowname;
+			this._midName = medname;
+			this._midRightName = medhiname;
+			this._rightName = hiname;
+			this._hideLeft = hideoff;
+			this._hideMidLeft = nohide;
+			this._hideMid = hidemedium;
+			this._hideMidRight = hidemediumhigh;
+			this._hideRight = nohide;
+		} else {
+			this._leftState = (high === 'on' && allowDisable);
+			this._midLeftState = (medhigh === 'on' && allowDisable);
+			this._midState = (med === 'on' && allowDisable);
+			this._midRightState = (low === 'on' && allowDisable);
+			this._rightState = (offstate == 'on' && allowDisable);
+			this._leftColor = hicolor;
+			this._midLeftColor = medhighcolor;
+			this._midColor = medcolor;
+			this._midRightColor = lowcolor;
+			this._rightColor = offcolor;
+			this._leftText = hitext;
+			this._midLeftText = medhitext;
+			this._midText = medtext;
+			this._midRightText = lowtext;
+			this._rightText = offtext;
+			this._leftName = hiname;
+			this._midLeftName = medhiname;
+			this._midName = medname;
+			this._midRightName = lowname;
+			this._rightName = offname;
+			this._hideRight = hideoff;
+			this._hideMidRight = nohide;
+			this._hideMid = hidemedium;
+			this._hideMidLeft = hidemediumhigh;
+			this._hideLeft = nohide;
+		}
 	}
 
 	setPercentage(e) {
 		const level = e.currentTarget.getAttribute('name');
 		const param = { entity_id: this._config.entity };
+
 		if (level == 'off') {
 			this.hass.callService('fan', 'turn_off', param);
-			param.percentage = this._offSP;
-			this.hass.callService('fan', 'set_percentage', param);
 		} else if (level == 'low') {
 			if (this._config.sendStateWithSpeed) {
 				this.hass.callService('fan', 'turn_on', { entity_id: this._config.entity, percentage: this._lowSP });
@@ -396,18 +399,18 @@ class CustomFourSpeedFanRow extends Polymer.Element {
 				param.percentage = this._lowSP;
 				this.hass.callService('fan', 'set_percentage', param);
 			}
-		} else if (level == 'medium-low') {
-			if (this._config.sendStateWithSpeed) {
-				this.hass.callService('fan', 'turn_on', { entity_id: this._config.entity, percentage: this._medLowSP });
-			} else {
-				param.percentage = this._medLowSP;
-				this.hass.callService('fan', 'set_percentage', param);
-			}
 		} else if (level == 'medium') {
 			if (this._config.sendStateWithSpeed) {
 				this.hass.callService('fan', 'turn_on', { entity_id: this._config.entity, percentage: this._medSP });
 			} else {
 				param.percentage = this._medSP;
+				this.hass.callService('fan', 'set_percentage', param);
+			}
+		} else if (level == 'medium-high') {
+			if (this._config.sendStateWithSpeed) {
+				this.hass.callService('fan', 'turn_on', { entity_id: this._config.entity, percentage: this._medhiSP });
+			} else {
+				param.percentage = this._medhiSP;
 				this.hass.callService('fan', 'set_percentage', param);
 			}
 		} else if (level == 'high') {
